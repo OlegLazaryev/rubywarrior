@@ -1,3 +1,5 @@
+require 'environment'
+
 class Player
 
 	def initialize
@@ -5,13 +7,13 @@ class Player
 	end
 
   def play_turn(warrior)
-  	warrior.pivot! and return if warrior.feel.wall? || archer_backward?(warrior)  	
+  	environment ||= Environment.new(warrior)
 
-    if warrior.feel.empty?
+  	warrior.pivot! and return if environment.wall_forward? || environment.archer_backward?
+
+    if environment.nothing_forward?
     	if (warrior.health < 20)
-    		look = warrior.look
-    		closest_space = detect_closest_unit(warrior)
-    		if closest_space && closest_space.enemy?
+    		if environment.enemy_forward?
     			warrior.shoot!
     		elsif !damage?(warrior)
     			warrior.rest!
@@ -21,7 +23,7 @@ class Player
 				warrior.walk!
 			end
     	else
-    		if !warrior.look.any?(&:captive?) && warrior.look.any?(&:enemy?)
+    		if environment.safe_attack?
     			warrior.shoot!
     		else
     			warrior.walk!
@@ -38,19 +40,6 @@ class Player
   end
 
   private
-
-  def archer_backward?(warrior)
-  	space  = detect_closest_unit(warrior, :backward)
-  	return unless space  		
-  	unit = space.unit
-  	return unless unit
-  	unit.name == 'Archer'
-  end
-
-  def detect_closest_unit(warrior, direction = :forward)
-  	look = warrior.look(direction)
-    look.detect { |space| !space.empty? }
-  end
 
   def damage?(warrior)
   	@health > warrior.health
