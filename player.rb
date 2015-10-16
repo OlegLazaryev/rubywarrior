@@ -4,6 +4,7 @@ class Player
 	end
 
   def play_turn(warrior)
+  	warrior.pivot! and return if warrior.feel.wall?
     if warrior.feel.empty?
     	if (warrior.health < 20)
     		if !damage?(warrior)
