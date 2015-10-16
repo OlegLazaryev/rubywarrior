@@ -43,8 +43,7 @@ class Player
   	space  = detect_closest_unit(warrior, :backward)
   	return unless space  		
   	unit = space.unit
-  	puts 'archer_backward?'
-  	puts unit.name
+  	return unless unit
   	unit.name == 'Archer'
   end
 
