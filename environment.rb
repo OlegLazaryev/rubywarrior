@@ -27,6 +27,10 @@ class Environment
   	no_captives_detected? && enemy_detected?
   end
 
+  def captive_forward?
+    warrior.feel.captive?
+  end
+
   private
 
   attr_reader :warrior
