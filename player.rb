@@ -4,13 +4,15 @@ class Player
 	end
 
   def play_turn(warrior)
-  	puts 'Health Before'
-  	puts @health
-  	puts warrior.health
-
     if warrior.feel.empty?
-    	if (warrior.health < 20) && !damage?(warrior)
-    		warrior.rest!
+    	if (warrior.health < 20)
+    		if !damage?(warrior)
+    			warrior.rest!
+			elsif warrior.health < 6
+				warrior.walk!(:backward)
+			else
+				warrior.walk!
+			end
     	else
     		warrior.walk!
     	end	
@@ -22,10 +24,6 @@ class Player
 		end
     end
     @health = warrior.health
-
-    puts 'Health After'
-  	puts @health
-  	puts warrior.health
   end
 
   private
