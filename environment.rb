@@ -44,5 +44,4 @@ class Environment
   	warrior.look.any?(&:enemy?)
   end
 
-
 end

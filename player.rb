@@ -1,23 +1,25 @@
 require 'environment'
+require 'condition'
 
 class Player
 
 	def initialize
-		@health = 0
+		@condition = Condition.new
 	end
 
   def play_turn(warrior)
-  	environment ||= Environment.new(warrior)
+  	environment = Environment.new(warrior)
+  	condition.current_health = warrior.health
 
   	warrior.pivot! and return if environment.wall_forward? || environment.archer_backward?
 
     if environment.nothing_forward?
-    	if (warrior.health < 20)
+    	if condition.injured?
     		if environment.enemy_forward?
     			warrior.shoot!
-    		elsif !damage?(warrior)
+    		elsif condition.not_injuring_now?
     			warrior.rest!
-			elsif warrior.health < 12
+			elsif condition.severe_injured?
 				warrior.walk!(:backward)
 			else
 				warrior.walk!
@@ -36,13 +38,11 @@ class Player
 			warrior.attack!
 		end
     end
-    @health = warrior.health
+    condition.set_current_health
   end
 
   private
 
-  def damage?(warrior)
-  	@health > warrior.health
-  end
+  attr_reader :condition
 
 end
